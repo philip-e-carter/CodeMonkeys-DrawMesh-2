@@ -1,32 +1,32 @@
-using System;
-// using System.Collections;
-// using System.Collections.Generic;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class DrawMesh : MonoBehaviour
-{
+public class DrawMesh : MonoBehaviour {
+
 
     [SerializeField] private Transform debugVisual1;
     [SerializeField] private Transform debugVisual2;
+
     private Mesh mesh;
-    public Vector3 lastMousePosition;
-    
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // mouse pressed
-        {
+    private Vector3 lastMousePosition;
+
+    private void Awake() {
+    }
+
+    private void Update() {
+        if (Input.GetMouseButtonDown(0)) {
+            // Mouse Pressed
             mesh = new Mesh();
-            mesh.MarkDynamic();
-            Vector3 mouseWorldPosition = GetMouseWorldPosition();
-            
+
             Vector3[] vertices = new Vector3[4];
             Vector2[] uv = new Vector2[4];
-            int[] triangles = new int [6];
+            int[] triangles = new int[6];
 
-            vertices[0] = mouseWorldPosition;
-            vertices[1] = mouseWorldPosition;
-            vertices[2] = mouseWorldPosition;
-            vertices[3] = mouseWorldPosition;
+            vertices[0] = GetMouseWorldPosition();
+            vertices[1] = GetMouseWorldPosition();
+            vertices[2] = GetMouseWorldPosition();
+            vertices[3] = GetMouseWorldPosition();
 
             uv[0] = Vector2.zero;
             uv[1] = Vector2.zero;
@@ -44,65 +44,65 @@ public class DrawMesh : MonoBehaviour
             mesh.vertices = vertices;
             mesh.uv = uv;
             mesh.triangles = triangles;
+            mesh.MarkDynamic();
 
             GetComponent<MeshFilter>().mesh = mesh;
 
             lastMousePosition = GetMouseWorldPosition();
         }
 
-        if (Input.GetMouseButton(0)) // mouse held down
-        {
-            Vector3 mouseWorldPosition = GetMouseWorldPosition();
-            
-            Vector3[] vertices = new Vector3[mesh.vertices.Length + 2];
-            Vector2[] uv = new Vector2[mesh.uv.Length + 2];
-            int[]     triangles = new int    [mesh.triangles.Length + 6];
-            
-            mesh.vertices.CopyTo(vertices, 0);
-            mesh.uv.CopyTo(uv, 0);
-            mesh.triangles.CopyTo(triangles, 0);
+        if (Input.GetMouseButton(0)) {
+            // Mouse held down
+            float minDistance = .1f;
+            if (Vector3.Distance(GetMouseWorldPosition(), lastMousePosition) > minDistance) {
+                Vector3[] vertices = new Vector3[mesh.vertices.Length + 2];
+                Vector2[] uv = new Vector2[mesh.uv.Length + 2];
+                int[] triangles = new int[mesh.triangles.Length + 6];
 
-            int vIndex = vertices.Length - 4;
-            int vIndex0 = vIndex + 0;
-            int vIndex1 = vIndex + 1;
-            int vIndex2 = vIndex + 2;
-            int vIndex3 = vIndex + 3;
-            
-            // transform.position = GetMouseWorldPosition();
+                mesh.vertices.CopyTo(vertices, 0);
+                mesh.uv.CopyTo(uv, 0);
+                mesh.triangles.CopyTo(triangles, 0);
 
-            Vector3 mouseForwardVector = mouseWorldPosition - lastMousePosition.normalized;
-            Vector3 normal2D = new Vector3(0,0,-1f);
-            float lineThickness = 1f;
-            Vector3 newVertexUp = mouseWorldPosition + Vector3.Cross(mouseForwardVector, normal2D) * lineThickness;
-            Vector3 newVertexDown = mouseWorldPosition + Vector3.Cross(mouseForwardVector, normal2D * -1f) * lineThickness;
+                int vIndex = vertices.Length - 4;
+                int vIndex0 = vIndex + 0;
+                int vIndex1 = vIndex + 1;
+                int vIndex2 = vIndex + 2;
+                int vIndex3 = vIndex + 3;
 
-            debugVisual1.position = newVertexUp;
-            debugVisual2.position = newVertexDown;
+                Vector3 mouseForwardVector = (GetMouseWorldPosition() - lastMousePosition).normalized;
+                Vector3 normal2D = new Vector3(0, 0, -1f);
+                float lineThickness = 1f;
+                Vector3 newVertexUp = GetMouseWorldPosition() + Vector3.Cross(mouseForwardVector, normal2D) * lineThickness;
+                Vector3 newVertexDown = GetMouseWorldPosition() + Vector3.Cross(mouseForwardVector, normal2D * -1f) * lineThickness;
 
-            vertices[vIndex2] = newVertexUp;
-            vertices[vIndex3] = newVertexDown;
-            
-            uv[vIndex2] = Vector2.zero;
-            uv[vIndex3] = Vector2.zero;
-
-            int tIndex = triangles.Length - 6;
+                debugVisual1.position = newVertexUp;
+                debugVisual2.position = newVertexDown;
                 
-            triangles[tIndex + 0] = vIndex0;
-            triangles[tIndex + 1] = vIndex3;
-            triangles[tIndex + 2] = vIndex1;
-            
-            triangles[tIndex + 3] = vIndex1;
-            triangles[tIndex + 4] = vIndex2;
-            triangles[tIndex + 5] = vIndex3;
+                vertices[vIndex2] = newVertexUp;
+                vertices[vIndex3] = newVertexDown;
 
-            mesh.vertices = vertices;
-            mesh.uv = uv;
-            mesh.triangles = triangles;
+                uv[vIndex2] = Vector2.zero;
+                uv[vIndex3] = Vector2.zero;
 
-            lastMousePosition = mouseWorldPosition;
+                int tIndex = triangles.Length - 6;
+
+                triangles[tIndex + 0] = vIndex0;
+                triangles[tIndex + 1] = vIndex2;
+                triangles[tIndex + 2] = vIndex1;
+
+                triangles[tIndex + 3] = vIndex1;
+                triangles[tIndex + 4] = vIndex2;
+                triangles[tIndex + 5] = vIndex3;
+
+                mesh.vertices = vertices;
+                mesh.uv = uv;
+                mesh.triangles = triangles;
+
+                lastMousePosition = GetMouseWorldPosition();
+            }
         }
     }
-
+    
     // Get Mouse Position in World with Z = 0f
     public static Vector3 GetMouseWorldPosition()
     {
@@ -115,4 +115,5 @@ public class DrawMesh : MonoBehaviour
     {
         return worldCamera.ScreenToWorldPoint(screenPosition);
     }
+
 }
