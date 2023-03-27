@@ -41,24 +41,26 @@ public class DrawMesh : MonoBehaviour {
     }
 
     private void DrawSomethingForChristsSake() {
-
+        // Drawing 1 triangle draws nothing.  Drawing 2 triangles draws 2 triangles.
+        // Does each subsequent traignel need to be attached to orevious?
+        
         Vector3[] vertices = new Vector3[6];
         Vector2[] uv = new Vector2[6];
         int[] triangles = new int[9];
         
-        vertices[0] = new Vector3(0,0,0);
-        vertices[1] = new Vector3(0,1000,0);
-        vertices[2] = new Vector3(1000,1000,0);
-        vertices[3] = new Vector3(1000,0,0);
-        vertices[4] = new Vector3(1000,2000,0);
-        vertices[5] = new Vector3(2000,100,0);
+        vertices[0] = new Vector3(00,00,0);
+        vertices[1] = new Vector3(00,10,0);
+        vertices[2] = new Vector3(10,10,0);
+        vertices[3] = new Vector3(00,00,0);
+        vertices[4] = new Vector3(10,10,0);  // 30,10 and 30,20 30,05, 30,04 works.  30,00 30,01, 30,02 30,03 does not, because if the triangle is too flat it won't sow at all. 
+        vertices[5] = new Vector3(10,00,0);
         
         uv[0] = Vector2.zero;
-        uv[1] = Vector2.zero;
+        uv[1] = Vector2.one;
         uv[2] = Vector2.zero;
-        uv[3] = Vector2.zero;
+        uv[3] = Vector2.one;
         uv[4] = Vector2.zero;
-        uv[5] = Vector2.zero;
+        uv[5] = Vector2.right;
 
         triangles[0] = 0;
         triangles[1] = 1;
@@ -66,47 +68,19 @@ public class DrawMesh : MonoBehaviour {
         triangles[3] = 3;
         triangles[4] = 4;
         triangles[5] = 5;
-        // triangles[6] = 6;
-        // triangles[7] = 7;
-        // triangles[8] = 8;
+
+        Color[] colors = new Color[6];
+        colors[0] = Color.black;
+        colors[1] = Color.blue;
+        colors[2] = Color.green;
+        colors[3] = Color.yellow;
+        colors[4] = Color.magenta;
+        colors[5] = Color.red;
         
-        // mesh.vertices.CopyTo(vertices, 0);
-        // mesh.uv.CopyTo(uv, 0);
-        // mesh.triangles.CopyTo(triangles, 0);
-
-        // int vIndex = vertices.Length - 4;
-        // int vIndex0 = vIndex + 0;
-        // int vIndex1 = vIndex + 1;
-        // int vIndex2 = vIndex + 2;
-        // int vIndex3 = vIndex + 3;
-
-        // Vector3 mouseForwardVector = (mouseWorldPosition - lastMousePosition).normalized;
-        // Vector3 normal2D = new Vector3(0, 0, -1f);
-        // float lineThickness = 0.2f;
-        // Vector3 newVertexUp = mouseWorldPosition + Vector3.Cross(mouseForwardVector, normal2D) * lineThickness;
-        // Vector3 newVertexDown = mouseWorldPosition + Vector3.Cross(mouseForwardVector, normal2D * -1f) * lineThickness;
-
-        // vertices[vIndex2] = newVertexUp;
-        // vertices[vIndex3] = newVertexDown;
-
-        // uv[vIndex2] = Vector2.zero;
-        // uv[vIndex3] = Vector2.zero;
-
-        // int tIndex = triangles.Length - 6;
-
-        // triangles[tIndex + 0] = vIndex0;
-        // triangles[tIndex + 1] = vIndex2;
-        // triangles[tIndex + 2] = vIndex1;
-
-        // triangles[tIndex + 3] = vIndex1;
-        // triangles[tIndex + 4] = vIndex2;
-        // triangles[tIndex + 5] = vIndex3;
-
+        // mesh.colors = colors;
         mesh.vertices = vertices;
         mesh.uv = uv;
         mesh.triangles = triangles;
-
-        lastMousePosition = mouseWorldPosition;
     }
 
     private void Update() {
@@ -122,7 +96,7 @@ public class DrawMesh : MonoBehaviour {
         if (Input.GetMouseButton(0)) { // Mouse held down/dragged
             // print("mouse dragged");
 
-            MouseDraggedCodeMonkey();
+            // MouseDraggedCodeMonkey();
             // mesh = UtilsClass.MouseDraggedCodeMonkey();
 
             // my technique 
