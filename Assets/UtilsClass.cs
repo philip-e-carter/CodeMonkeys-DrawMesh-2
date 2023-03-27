@@ -54,7 +54,7 @@ public class UtilsClass : MonoBehaviour
         return mesh;
     }
     
-    public static Mesh mousePressedCodeMonkey()
+    public static Mesh MousePressedCodeMonkey()
     {
         // print("mouse pressed");
         mouseWorldPosition = GetMouseWorldPosition();
@@ -150,6 +150,50 @@ public class UtilsClass : MonoBehaviour
 
         return mesh;
     }
+
+    public static Mesh InitMesh()
+    {
+        mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
+        mesh = new Mesh();
+    
+        Vector3[] vertices = new Vector3[4];
+        Vector2[] uv = UtilsClass.createUV();
+        int[] triangles = UtilsClass.createTriangles();
+
+        mesh.vertices = vertices;
+        mesh.uv = uv;
+        mesh.triangles = triangles;
+    
+        mesh.MarkDynamic(); // if moved to Awake(), nothing is drawn. hmm maybe this is the solution for me.
+
+        lastMousePosition = mouseWorldPosition;
+
+        return mesh;
+    }
+    
+    public static Vector2[] createUV()
+    {
+        Vector2[] uv = new Vector2[4];
+        uv[0] = Vector2.zero;
+        uv[1] = Vector2.zero;
+        uv[2] = Vector2.zero;
+        uv[3] = Vector2.zero;
+        return uv;
+    }
+
+    public static int[] createTriangles()
+    {
+        int[] triangles = new int[6];
+        triangles[0] = 0;
+        triangles[1] = 3;
+        triangles[2] = 1;
+    
+        triangles[3] = 1;
+        triangles[4] = 3;
+        triangles[5] = 2;
+        return triangles;
+    }
+    
     public static void logMesh(Mesh mesh)
     {
         if (mesh.vertices.Length != mesh.uv.Length)
@@ -166,6 +210,5 @@ public class UtilsClass : MonoBehaviour
         {
             print("mesh vertices[" + i + "]/triangles= " + mesh.vertices[i].x + "-"+ mesh.vertices[i].y  + "/" + mesh.triangles[i]);
         }
-
     }
 }
