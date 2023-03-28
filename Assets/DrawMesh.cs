@@ -36,31 +36,42 @@ public class DrawMesh : MonoBehaviour {
         GetComponent<MeshFilter>().mesh = mesh;
         // GetComponent<MeshFilter>().mesh = UtilsClass.InitMesh();
         mesh.MarkDynamic(); // if moved to Awake(), nothing is drawn. hmm maybe this is the solution for me.
-        DrawSomethingForChristsSake();
+        // DrawSomethingForChristsSake();
+        DrawSquare(new Vector3(0,0,0), 3);
+        DrawSquare(new Vector3(10,10,10), 3);
+        // DrawTriangle();
         // lastMousePosition = mouseWorldPosition;
     }
 
-    private void DrawSomethingForChristsSake() {
+    // http://ilkinulas.github.io/development/unity/2016/04/30/cube-mesh-in-unity3d.html
+    // http://ilkinulas.github.io/development/unity/2016/05/06/uv-mapping.html
+    void DrawTriangle()
+    {
+        mesh.Clear();
+
+        // make changes to the Mesh by creating arrays which contain the new values
+        mesh.vertices = new Vector3[] {new Vector3(0, 0, 0), new Vector3(0, 1, 0), new Vector3(1, 1, 0)};
+        mesh.uv = new Vector2[] {new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)};
+        mesh.triangles =  new int[] {0, 1, 2};
+    }
+    private void DrawSquare(Vector3 location, float size) {
         // Drawing 1 triangle draws nothing.  Drawing 2 triangles draws 2 triangles.
-        // Does each subsequent traignel need to be attached to orevious?
-        
-        Vector3[] vertices = new Vector3[6];
-        Vector2[] uv = new Vector2[6];
-        int[] triangles = new int[9];
-        
-        vertices[0] = new Vector3(00,00,0);
-        vertices[1] = new Vector3(00,10,0);
-        vertices[2] = new Vector3(10,10,0);
-        vertices[3] = new Vector3(00,00,0);
-        vertices[4] = new Vector3(10,10,0);  // 30,10 and 30,20 30,05, 30,04 works.  30,00 30,01, 30,02 30,03 does not, because if the triangle is too flat it won't sow at all. 
-        vertices[5] = new Vector3(10,00,0);
-        
-        uv[0] = Vector2.zero;
-        uv[1] = Vector2.one;
-        uv[2] = Vector2.zero;
-        uv[3] = Vector2.one;
-        uv[4] = Vector2.zero;
-        uv[5] = Vector2.right;
+        // Does each subsequent traignel need to be attached to orevious? No.
+        Vector3[] vertices = new Vector3[mesh.vertices.Length + 4];
+        Vector2[] uv = new Vector2[mesh.uv.Length + 4];
+        int[] triangles = new int[mesh.triangles.Length + 6];
+
+        // Vector3[] vertices = new Vector3[6];
+        // Vector2[] uv = new Vector2[vertices.Length];
+        // int[] triangles = new int[9];
+
+        float radius = size / 2;
+        vertices[0] = new Vector3(location.x-radius,location.y-radius,0);
+        vertices[1] = new Vector3(location.x-radius,location.y+radius,0);
+        vertices[2] = new Vector3(location.x+radius,location.y+radius,0);
+        vertices[3] = new Vector3(location.x-radius,location.y-radius,0);
+        vertices[4] = new Vector3(location.x+radius,location.x+radius,0);  // 10,04 works. 10,03 does not, because if the triangle is too flat it won't show at all. 
+        vertices[5] = new Vector3(location.x+radius,location.y-radius,0);
 
         triangles[0] = 0;
         triangles[1] = 1;
@@ -69,18 +80,65 @@ public class DrawMesh : MonoBehaviour {
         triangles[4] = 4;
         triangles[5] = 5;
 
-        Color[] colors = new Color[6];
-        colors[0] = Color.black;
-        colors[1] = Color.blue;
-        colors[2] = Color.green;
-        colors[3] = Color.yellow;
-        colors[4] = Color.magenta;
-        colors[5] = Color.red;
-        
-        // mesh.colors = colors;
         mesh.vertices = vertices;
-        mesh.uv = uv;
         mesh.triangles = triangles;
+        mesh.uv = uv;
+        // mesh.colors32 = colors; // assigning vertices clears out colors, so assign colors last. kinda makes sense since there is 1 color per vertice.
+
+        // update mesh collider
+        GetComponent<MeshCollider>().sharedMesh = null;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+    }
+
+    
+    private void DrawSomethingForChristsSake() {
+        // Drawing 1 triangle draws nothing.  Drawing 2 triangles draws 2 triangles.
+        // Does each subsequent traignel need to be attached to orevious?
+        
+        Vector3[] vertices = new Vector3[6];
+        Vector2[] uv = new Vector2[vertices.Length];
+        int[] triangles = new int[9];
+        
+        vertices[0] = new Vector3(00,00,0);
+        vertices[1] = new Vector3(00,10,0);
+        vertices[2] = new Vector3(10,10,0);
+        vertices[3] = new Vector3(00,00,0);
+        vertices[4] = new Vector3(10,10,0);  // 10,04 works. 10,03 does not, because if the triangle is too flat it won't show at all. 
+        vertices[5] = new Vector3(10,00,0);
+        
+        // uv[0] = Vector2.zero;
+        // uv[1] = Vector2.one;
+        // uv[2] = Vector2.zero;
+        // uv[3] = Vector2.one;
+        // uv[4] = Vector2.zero;
+        // uv[5] = Vector2.right;
+
+        triangles[0] = 0;
+        triangles[1] = 1;
+        triangles[2] = 2;
+        triangles[3] = 3;
+        triangles[4] = 4;
+        triangles[5] = 5;
+
+        Color32[] colors = new Color32[vertices.Length];
+        // colors[0] = Color.black;
+        // colors[1] = Color.blue;
+        // colors[2] = Color.green;
+        // colors[3] = Color.yellow;
+        // colors[4] = Color.magenta;
+        // colors[5] = Color.red;
+
+        for (int i = 0; i < vertices.Length; i++)
+            colors[i] = Color.Lerp(Color.red, Color.green, vertices[i].y);
+
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.uv = uv;
+        mesh.colors32 = colors; // assigning vertices clears out colors, so assign colors last. kinda makes sense since there is 1 color per vertice.
+
+        // update mesh collider
+        GetComponent<MeshCollider>().sharedMesh = null;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     private void Update() {
