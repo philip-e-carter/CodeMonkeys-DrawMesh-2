@@ -15,6 +15,8 @@ public class DrawMesh : MonoBehaviour {
     private Mesh mesh;
     private Vector3 lastMousePosition;
 
+    public Material myMaterial;
+
     private void Awake()
     {
         // mesh = new Mesh();
@@ -35,10 +37,14 @@ public class DrawMesh : MonoBehaviour {
     
         GetComponent<MeshFilter>().mesh = mesh;
         // GetComponent<MeshFilter>().mesh = UtilsClass.InitMesh();
+        // mesh.mat
         mesh.MarkDynamic(); // if moved to Awake(), nothing is drawn. hmm maybe this is the solution for me.
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
         // DrawSomethingForChristsSake();
         DrawSquare(new Vector3(0,0,0), 3);
-        DrawSquare(new Vector3(10,10,10), 3);
+        // DrawSquare(new Vector3(10,10,10), 3);
         // DrawTriangle();
         // lastMousePosition = mouseWorldPosition;
     }
@@ -72,6 +78,14 @@ public class DrawMesh : MonoBehaviour {
         vertices[3] = new Vector3(location.x-radius,location.y-radius,0);
         vertices[4] = new Vector3(location.x+radius,location.x+radius,0);  // 10,04 works. 10,03 does not, because if the triangle is too flat it won't show at all. 
         vertices[5] = new Vector3(location.x+radius,location.y-radius,0);
+        
+        Color32[] colors = new Color32[vertices.Length];
+        colors[0] = Color.cyan;
+        colors[1] = Color.yellow;
+        colors[2] = Color.green;
+        colors[3] = Color.yellow;
+        colors[4] = Color.magenta;
+        colors[5] = Color.red;
 
         triangles[0] = 0;
         triangles[1] = 1;
@@ -83,10 +97,10 @@ public class DrawMesh : MonoBehaviour {
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uv;
-        // mesh.colors32 = colors; // assigning vertices clears out colors, so assign colors last. kinda makes sense since there is 1 color per vertice.
+        mesh.colors32 = colors; // assigning vertices clears out colors, so assign colors last. kinda makes sense since there is 1 color per vertice.
 
         // update mesh collider
-        GetComponent<MeshCollider>().sharedMesh = null;
+         GetComponent<MeshCollider>().sharedMesh = null;
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 

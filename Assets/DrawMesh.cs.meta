@@ -3,7 +3,10 @@ guid: 2a398be75bb2c4dbda96e5065fcbd568
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - debugVisual1: {instanceID: 0}
+  - debugVisual2: {instanceID: 0}
+  - myMaterial: {fileID: 2100000, guid: 1ddc102759a5b4ccf96b30968b1e5cb6, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
