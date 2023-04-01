@@ -196,19 +196,23 @@ public class UtilsClass : MonoBehaviour
     
     public static void logMesh(Mesh mesh)
     {
-        if (mesh.vertices.Length != mesh.uv.Length)
-        {
-            print("Phils Error: mesh.vertices.Length=" + mesh.vertices.Length + " but mesh.uv.Length=" + mesh.uv.Length);
-            return;
-        }
-        if (mesh.vertices.Length * 1.5 != mesh.triangles.Length)
-        {
-            print("Phils Error: mesh.vertices.Length=" + mesh.vertices.Length + " but mesh.triangles.Length=" + mesh.triangles.Length);
-            return;
-        }
+        // if (mesh.vertices.Length != mesh.uv.Length)
+        // {
+        //     print("Phils Error: mesh.vertices.Length=" + mesh.vertices.Length + " but mesh.uv.Length=" + mesh.uv.Length);
+        //     return;
+        // }
+        // if (mesh.vertices.Length * 1.5 != mesh.triangles.Length)
+        // {
+        //     print("Phils Error: mesh.vertices.Length=" + mesh.vertices.Length + " but mesh.triangles.Length=" + mesh.triangles.Length);
+        //     return;
+        // }
         for(int i = 0; i < mesh.vertices.Length; i++)
         {
-            print("mesh vertices[" + i + "]/triangles= " + mesh.vertices[i].x + "-"+ mesh.vertices[i].y  + "/" + mesh.triangles[i]);
+            print("mesh vertices/colors[" + i + "]=" + mesh.vertices[i].x + "/"+ mesh.vertices[i].y + mesh.colors32[i].ToString());
+        }
+        for(int i = 0; i < mesh.triangles.Length; i++)
+        {
+            print("mesh triangles[" + i + "]=" + mesh.triangles[i]);
         }
     }
 }

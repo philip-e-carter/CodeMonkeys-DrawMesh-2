@@ -23,17 +23,20 @@ public class DrawMesh : MonoBehaviour {
         // GetComponent<MeshFilter>().mesh = UtilsClass.drawDot();
         // GetComponent<MeshFilter>().mesh.MarkDynamic();
         // UtilsClass.mesh = mesh;
+
+        // Prevent spammy stacktrace of each log message when copy pasted from console.
+        Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
         
         mouseWorldPosition = UtilsClass.GetMouseWorldPosition();
         mesh = new Mesh();
         
-        Vector3[] vertices = new Vector3[4];
-        Vector2[] uv = UtilsClass.createUV();
-        int[] triangles = UtilsClass.createTriangles();
-        
-        mesh.vertices = vertices;
-        mesh.uv = uv;
-        mesh.triangles = triangles;
+        // Vector3[] vertices = new Vector3[4];
+        // Vector2[] uv = UtilsClass.createUV();
+        // int[] triangles = UtilsClass.createTriangles();
+        //
+        // mesh.vertices = vertices;
+        // mesh.uv = uv;
+        // mesh.triangles = triangles;
     
         GetComponent<MeshFilter>().mesh = mesh;
         // GetComponent<MeshFilter>().mesh = UtilsClass.InitMesh();
@@ -61,10 +64,10 @@ public class DrawMesh : MonoBehaviour {
         mesh.triangles =  new int[] {0, 1, 2};
     }
     private void DrawSquare(Vector3 location, float size) {
-        // Drawing 1 triangle draws nothing.  Drawing 2 triangles draws 2 triangles.
-        // Does each subsequent traignel need to be attached to orevious? No.
-        Vector3[] vertices = new Vector3[mesh.vertices.Length + 4];
-        Vector2[] uv = new Vector2[mesh.uv.Length + 4];
+        // Vertices length s/b 4 for simplicity/efficiency but I only got it to work with 6. 
+        Vector3[] vertices = new Vector3[mesh.vertices.Length + 6];
+        Color32[] colors = new Color32[vertices.Length];
+        Vector2[] uv = new Vector2[vertices.Length];
         int[] triangles = new int[mesh.triangles.Length + 6];
 
         // Vector3[] vertices = new Vector3[6];
@@ -78,8 +81,7 @@ public class DrawMesh : MonoBehaviour {
         vertices[3] = new Vector3(location.x-radius,location.y-radius,0);
         vertices[4] = new Vector3(location.x+radius,location.x+radius,0);  // 10,04 works. 10,03 does not, because if the triangle is too flat it won't show at all. 
         vertices[5] = new Vector3(location.x+radius,location.y-radius,0);
-        
-        Color32[] colors = new Color32[vertices.Length];
+
         colors[0] = Color.cyan;
         colors[1] = Color.yellow;
         colors[2] = Color.green;
@@ -95,13 +97,10 @@ public class DrawMesh : MonoBehaviour {
         triangles[5] = 5;
 
         mesh.vertices = vertices;
-        mesh.triangles = triangles;
-        mesh.uv = uv;
         mesh.colors32 = colors; // assigning vertices clears out colors, so assign colors last. kinda makes sense since there is 1 color per vertice.
-
-        // update mesh collider
-         GetComponent<MeshCollider>().sharedMesh = null;
-        GetComponent<MeshCollider>().sharedMesh = mesh;
+        mesh.uv = uv;
+        mesh.triangles = triangles;
+        UtilsClass.logMesh(mesh);
     }
 
     
